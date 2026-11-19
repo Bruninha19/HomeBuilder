@@ -1,0 +1,754 @@
+
+:root {
+    --bg: #151b27;
+    --bg-secondary: #1c2533;
+    --panel: #222c3c;
+    --panel-light: #2c394c;
+    --border: #43516b;
+
+    --text: #eef3fb;
+    --muted: #9baabe;
+
+    --green: #83d69b;
+    --green-dark: #345c45;
+
+    --blue: #79baf1;
+    --red: #ec8585;
+    --yellow: #f1ca72;
+
+    --shadow: 0 4px 12px rgba(0,0,0,.25);
+
+    --radius: 7px;
+}
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    background: var(--bg);
+    color: var(--text);
+
+    font-family: monospace;
+    font-size: 14px;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 16px 0;
+}
+
+h1,
+h2,
+h3,
+p {
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 22px;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+
+h2 {
+    font-size: 17px;
+    margin-bottom: 12px;
+}
+
+h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+small {
+    color: var(--muted);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.topbar {
+    background: var(--bg-secondary);
+
+    border-bottom: 2px solid var(--border);
+
+    padding: 17px 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    font-size: 32px;
+}
+
+.brand h1 {
+    color: var(--green);
+}
+
+.brand small {
+    font-size: 11px;
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+button {
+    border: 1px solid var(--border);
+
+    background: var(--panel-light);
+    color: var(--text);
+
+    border-radius: 5px;
+
+    padding: 9px 13px;
+
+    transition:
+        background .15s,
+        border-color .15s,
+        transform .1s;
+}
+
+button:hover:not(:disabled) {
+    border-color: var(--green);
+    background: #39475b;
+}
+
+button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.nav-button {
+    font-size: 12px;
+}
+
+.nav-button.active {
+    background: var(--green-dark);
+    border-color: var(--green);
+    color: #d7ffe1;
+}
+
+.button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+}
+
+.button.primary {
+    background: #326b48;
+    border-color: #69bd80;
+    color: white;
+}
+
+.button.primary:hover {
+    background: #41885b;
+}
+
+.button.danger {
+    color: var(--red);
+    border-color: #805050;
+}
+
+.full-width {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+/* =========================================
+   MAIN
+========================================= */
+
+main {
+    width: 100%;
+    max-width: 1500px;
+
+    margin: auto;
+    padding: 20px;
+}
+
+.screen {
+    width: 100%;
+}
+
+.panel {
+    background: var(--panel);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+
+    padding: 16px;
+
+    box-shadow: var(--shadow);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header p {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* =========================================
+   FORMS
+========================================= */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label,
+.panel label {
+    display: block;
+
+    color: var(--muted);
+    font-size: 12px;
+
+    margin-bottom: 7px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+
+    background: #141c29;
+    color: var(--text);
+
+    border: 1px solid var(--border);
+    border-radius: 5px;
+
+    padding: 11px;
+
+    outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 2px rgba(131,214,155,.1);
+}
+
+input[type="file"] {
+    font-size: 11px;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* =========================================
+   EDITOR LAYOUT
+========================================= */
+
+.editor-layout {
+    display: grid;
+
+    grid-template-columns: 290px minmax(0, 1fr);
+
+    gap: 15px;
+
+    align-items: start;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sidebar .panel {
+    width: 100%;
+}
+
+.editor-panel {
+    min-width: 0;
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.editor-header h2 {
+    margin-bottom: 5px;
+}
+
+.editor-status {
+    font-size: 11px;
+    color: var(--green);
+}
+
+/* =========================================
+   TOOLBAR
+========================================= */
+
+.tool-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
+}
+
+.tool-button {
+    font-size: 11px;
+    min-height: 38px;
+}
+
+.tool-button.active {
+    background: var(--green-dark);
+    border-color: var(--green);
+    color: #d7ffe1;
+}
+
+.tool-button.danger {
+    color: var(--red);
+}
+
+.tool-button.danger.active {
+    background: #603838;
+    border-color: var(--red);
+}
+
+.tool-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.tool-options button {
+    flex: 1;
+}
+
+/* =========================================
+   CANVAS
+========================================= */
+
+.canvas-container {
+    width: 100%;
+
+    overflow: auto;
+
+    background: #101722;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    padding: 12px;
+
+    min-height: 420px;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+canvas {
+    display: block;
+
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+
+    max-width: none;
+
+    cursor: crosshair;
+
+    background: #182230;
+
+    border: 1px solid #344255;
+}
+
+#architect-canvas,
+#builder-canvas {
+    touch-action: none;
+}
+
+/* =========================================
+   EDITOR FOOTER
+========================================= */
+
+.editor-footer {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    flex-wrap: wrap;
+    gap: 12px;
+
+    margin-top: 14px;
+}
+
+.editor-footer p {
+    margin: 0;
+}
+
+/* =========================================
+   INFORMATION BOXES
+========================================= */
+
+.info-box {
+    background: #17212e;
+
+    border: 1px solid var(--border);
+    border-radius: 5px;
+
+    padding: 12px;
+
+    margin-top: 12px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+    line-height: 1.7;
+
+    overflow-wrap: anywhere;
+}
+
+.hint {
+    color: var(--muted);
+
+    font-size: 11px;
+    line-height: 1.6;
+
+    margin-top: 10px;
+}
+
+/* =========================================
+   VALIDATION
+========================================= */
+
+#validation-results {
+    font-size: 12px;
+}
+
+.requirement {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    padding: 8px 0;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.good {
+    color: var(--green);
+}
+
+.bad {
+    color: var(--red);
+}
+
+.warning {
+    color: var(--yellow);
+}
+
+/* =========================================
+   CONSTRUCTION RESOURCES
+========================================= */
+
+.resource-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 8px;
+}
+
+.resource-card {
+    background: #141d2a;
+
+    border: 1px solid #303d51;
+    border-radius: 5px;
+
+    padding: 10px;
+
+    min-width: 0;
+}
+
+.resource-card small {
+    display: block;
+
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.resource-card strong {
+    display: block;
+
+    font-size: 17px;
+
+    margin-top: 7px;
+
+    overflow-wrap: anywhere;
+}
+
+/* =========================================
+   PROGRESS BAR
+========================================= */
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+
+    background: #101722;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    overflow: hidden;
+}
+
+.progress-bar div {
+    width: 0%;
+    height: 100%;
+
+    background: var(--green);
+
+    transition: width .2s ease;
+}
+
+#progress-label {
+    margin-bottom: 0;
+}
+
+/* =========================================
+   TOAST
+========================================= */
+
+.toast {
+    position: fixed;
+
+    bottom: 20px;
+    right: 20px;
+
+    z-index: 1000;
+
+    background: #345b43;
+    color: white;
+
+    border: 1px solid var(--green);
+    border-radius: 6px;
+
+    padding: 13px 18px;
+
+    box-shadow: var(--shadow);
+
+    opacity: 0;
+    pointer-events: none;
+
+    transform: translateY(10px);
+
+    transition:
+        opacity .2s,
+        transform .2s;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+    text-align: center;
+
+    padding: 25px;
+
+    color: var(--muted);
+    font-size: 11px;
+
+    border-top: 1px solid var(--border);
+
+    margin-top: 20px;
+}
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+::-webkit-scrollbar-track {
+    background: #141c29;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #43516b;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #60718d;
+}
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .editor-layout {
+        grid-template-columns: 240px minmax(0, 1fr);
+    }
+
+    .tool-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 750px) {
+
+    .topbar {
+        padding: 14px;
+    }
+
+    .main-nav {
+        width: 100%;
+    }
+
+    .main-nav button {
+        flex: 1;
+        font-size: 10px;
+    }
+
+    main {
+        padding: 10px;
+    }
+
+    .editor-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .tool-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .canvas-container {
+        min-height: 300px;
+    }
+
+    .editor-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .tool-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .resource-card {
+        padding: 7px;
+    }
+
+    .resource-card strong {
+        font-size: 13px;
+    }
+
+    .editor-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .editor-footer button {
+        width: 100%;
+    }
+
+    .panel {
+        padding: 12px;
+    }
+
+}

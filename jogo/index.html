@@ -1,0 +1,487 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>House Builder</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="brand">
+            <span class="brand-icon">🏠</span>
+
+            <div>
+                <h1>HOUSE BUILDER</h1>
+                <small>Architecture & Construction Simulator</small>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <button class="nav-button active" data-screen="client">
+                01. Cliente
+            </button>
+
+            <button class="nav-button" data-screen="architect">
+                02. Arquiteto
+            </button>
+
+            <button class="nav-button" data-screen="builder">
+                03. Construtor
+            </button>
+        </nav>
+    </header>
+
+    <main>
+
+        <!-- ================================= -->
+        <!-- TELA DO CLIENTE -->
+        <!-- ================================= -->
+
+        <section id="client" class="screen">
+
+            <div class="panel">
+
+                <div class="section-header">
+                    <div>
+                        <h2>📋 Briefing do cliente</h2>
+                        <p>Descreva a casa que você deseja construir.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="project-name">
+                            Nome do projeto
+                        </label>
+
+                        <input
+                            type="text"
+                            id="project-name"
+                            value="Casa dos Sonhos"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project-budget">
+                            Orçamento disponível
+                        </label>
+
+                        <input
+                            type="number"
+                            id="project-budget"
+                            value="50000"
+                            min="1000"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project-style">
+                            Estilo arquitetônico
+                        </label>
+
+                        <select id="project-style">
+                            <option value="modern">Moderno</option>
+                            <option value="classic">Clássico</option>
+                            <option value="rustic">Rústico</option>
+                            <option value="industrial">Industrial</option>
+                            <option value="minimalist">Minimalista</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project-deadline">
+                            Prazo de construção (dias)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="project-deadline"
+                            value="30"
+                            min="1"
+                        >
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <h3>Exigências da casa</h3>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="req-bedroom">Quartos</label>
+                        <input type="number" id="req-bedroom" value="2" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="req-bathroom">Banheiros</label>
+                        <input type="number" id="req-bathroom" value="1" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="req-living">Salas</label>
+                        <input type="number" id="req-living" value="1" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="req-kitchen">Cozinhas</label>
+                        <input type="number" id="req-kitchen" value="1" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="req-garage">Garagens</label>
+                        <input type="number" id="req-garage" value="1" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="req-window">Janelas mínimas</label>
+                        <input type="number" id="req-window" value="4" min="0">
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="project-notes">
+                        Descrição adicional
+                    </label>
+
+                    <textarea
+                        id="project-notes"
+                        placeholder="Descreva outros detalhes que você deseja na casa..."
+                    ></textarea>
+                </div>
+
+                <div class="actions">
+                    <button
+                        class="button primary"
+                        id="export-json"
+                    >
+                        📄 Criar briefing e exportar JSON
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================= -->
+        <!-- TELA DO ARQUITETO -->
+        <!-- ================================= -->
+
+        <section id="architect" class="screen hidden">
+
+            <div class="editor-layout">
+
+                <aside class="sidebar">
+
+                    <div class="panel">
+
+                        <h2>🧱 Ferramentas</h2>
+
+                        <div class="tool-grid">
+
+                            <button class="tool-button active" data-tool="floor">
+                                🟫 Piso
+                            </button>
+
+                            <button class="tool-button" data-tool="wall">
+                                🧱 Parede
+                            </button>
+
+                            <button class="tool-button" data-tool="door">
+                                🚪 Porta
+                            </button>
+
+                            <button class="tool-button" data-tool="window">
+                                🪟 Janela
+                            </button>
+
+                            <button class="tool-button" data-tool="bedroom">
+                                🛏 Quarto
+                            </button>
+
+                            <button class="tool-button" data-tool="bathroom">
+                                🚿 Banheiro
+                            </button>
+
+                            <button class="tool-button" data-tool="living">
+                                🛋 Sala
+                            </button>
+
+                            <button class="tool-button" data-tool="kitchen">
+                                🍳 Cozinha
+                            </button>
+
+                            <button class="tool-button" data-tool="garage">
+                                🚗 Garagem
+                            </button>
+
+                            <button class="tool-button" data-tool="garden">
+                                🌳 Jardim
+                            </button>
+
+                            <button class="tool-button danger" data-tool="erase">
+                                🧹 Apagar
+                            </button>
+
+                        </div>
+
+                        <hr>
+
+                        <div class="tool-options">
+
+                            <button id="rotate-tool">
+                                ↻ Rotacionar
+                            </button>
+
+                            <button id="clear-plan">
+                                Limpar planta
+                            </button>
+
+                        </div>
+
+                        <p class="hint">
+                            Clique ou arraste para posicionar os elementos.
+                            Use o botão direito para apagar.
+                        </p>
+
+                    </div>
+
+
+                    <div class="panel">
+
+                        <h2>📂 Projeto</h2>
+
+                        <label for="architect-import">
+                            Importar briefing JSON
+                        </label>
+
+                        <input
+                            type="file"
+                            id="architect-import"
+                            accept=".json,application/json"
+                        >
+
+                        <div id="brief-info" class="info-box">
+                            Nenhum projeto carregado.
+                        </div>
+
+                    </div>
+
+
+                    <div class="panel">
+
+                        <h2>📐 Validação</h2>
+
+                        <div id="validation-results">
+                            Importe um briefing para começar.
+                        </div>
+
+                    </div>
+
+                </aside>
+
+
+                <div class="panel editor-panel">
+
+                    <div class="editor-header">
+                        <div>
+                            <h2>Editor de planta</h2>
+                            <small>Grade 30 × 20</small>
+                        </div>
+
+                        <div class="editor-status" id="editor-status">
+                            Aguardando projeto
+                        </div>
+                    </div>
+
+                    <div class="canvas-container">
+
+                        <canvas
+                            id="architect-canvas"
+                            width="720"
+                            height="480"
+                        ></canvas>
+
+                    </div>
+
+                    <div class="editor-footer">
+
+                        <p class="hint">
+                            Cada quadrado representa um tile da construção.
+                        </p>
+
+                        <button
+                            class="button primary"
+                            id="save-plan"
+                        >
+                            ✓ Concluir planta e exportar JSON
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================= -->
+        <!-- TELA DO CONSTRUTOR -->
+        <!-- ================================= -->
+
+        <section id="builder" class="screen hidden">
+
+            <div class="editor-layout">
+
+                <aside class="sidebar">
+
+                    <div class="panel">
+
+                        <h2>🏗️ Canteiro de obras</h2>
+
+                        <div id="construction-info">
+                            Importe uma planta para começar.
+                        </div>
+
+                        <hr>
+
+                        <div class="resource-grid">
+
+                            <div class="resource-card">
+                                <small>DINHEIRO</small>
+                                <strong id="resource-money">$0</strong>
+                            </div>
+
+                            <div class="resource-card">
+                                <small>MATERIAIS</small>
+                                <strong id="resource-materials">0</strong>
+                            </div>
+
+                            <div class="resource-card">
+                                <small>TEMPO</small>
+                                <strong id="resource-days">0</strong>
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+                        <label>Progresso da construção</label>
+
+                        <div class="progress-bar">
+                            <div id="construction-progress"></div>
+                        </div>
+
+                        <p id="progress-label" class="hint">
+                            0% concluído
+                        </p>
+
+                    </div>
+
+
+                    <div class="panel">
+
+                        <h2>📂 Importar planta</h2>
+
+                        <input
+                            type="file"
+                            id="builder-import"
+                            accept=".json,application/json"
+                        >
+
+                        <p class="hint">
+                            Importe o JSON exportado pelo arquiteto.
+                        </p>
+
+                    </div>
+
+
+                    <div class="panel">
+
+                        <h2>⚒️ Ações</h2>
+
+                        <button
+                            class="button primary full-width"
+                            id="build-selected"
+                        >
+                            Construir selecionado
+                        </button>
+
+                        <button
+                            class="button full-width"
+                            id="build-all"
+                        >
+                            Construir tudo
+                        </button>
+
+                        <button
+                            class="button full-width"
+                            id="export-construction"
+                        >
+                            Exportar progresso JSON
+                        </button>
+
+                    </div>
+
+                </aside>
+
+
+                <div class="panel editor-panel">
+
+                    <div class="editor-header">
+
+                        <div>
+                            <h2>🏠 Construção da casa</h2>
+                            <small>Selecione os elementos da planta.</small>
+                        </div>
+
+                        <div id="builder-status">
+                            Aguardando projeto
+                        </div>
+
+                    </div>
+
+                    <div class="canvas-container">
+
+                        <canvas
+                            id="builder-canvas"
+                            width="720"
+                            height="480"
+                        ></canvas>
+
+                    </div>
+
+                    <div id="construction-message" class="info-box">
+                        Importe uma planta para começar a construção.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        HOUSE BUILDER v0.1 · Architecture & Construction Simulator
+    </footer>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="game.js"></script>
+
+</body>
+</html>
