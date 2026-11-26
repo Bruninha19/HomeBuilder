@@ -1,0 +1,21 @@
+1 - casa de 2 andares
+2 - . nas centenas (orçamento)
+3 - validar a quantidade de comodos e nao o tamanho total
+4 - trocar o nome do json na etapa
+5 - mudar de cor oq tiver selecionado
+6 - fora de proporção o tempo
+7 - limite do construir tudo não ta sendo calculado certo na função, só o tempo funciona pois foi validado anteriormente
+8 - salvando no bagulho local do navegador
+9 - campos não podem ser negativos
+10 - importou sem selecionar o json
+11 - fazer por metros quadrados
+12 - apagar arrastando quando selecionado o botão direito
+13 - padronizar a linguagem
+14 - ter limite máximo na validação
+15 - cliente bot aleatório
+16 - validação após a construção
+17 - ao construir, diminuir o orçamento e aumentar os materiais, colocar como: materiais usados
+18 - 4 opção para o cliente validar
+19 - separar arquivos por tela
+
+
