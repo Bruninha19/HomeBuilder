@@ -41,3 +41,20 @@ Mantenha o código organizado e documentado.
 Comunique-se com a equipe para evitar conflitos e retrabalho.
 
 Objetivo: manter o desenvolvimento organizado, facilitar a colaboração entre os integrantes e evitar conflitos durante a integração do código.
+
+## Como executar e jogar
+
+Inicie um servidor local na pasta `jogo`:
+
+```powershell
+py -3.9 -m http.server 8000 --directory ".\jogo"
+```
+
+Abra `http://localhost:8000` no navegador. O fluxo do jogo é:
+
+1. Gere um cliente aleatório e crie o briefing.
+2. Importe o briefing no Arquiteto, desenhe a planta e exporte o JSON.
+3. Importe a planta no Construtor e conclua todos os elementos.
+4. Envie a obra para validação e passe o JSON exportado ao cliente.
+5. Na etapa **Validação do cliente**, importe o JSON recebido. O cliente pode aprovar a obra quando todos os requisitos, o orçamento e o prazo forem atendidos, ou solicitar ajustes.
+6. Exporte a resposta do cliente em JSON e devolva-a ao construtor.

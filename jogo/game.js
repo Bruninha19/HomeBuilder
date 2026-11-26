@@ -125,6 +125,8 @@ const REQUIREMENTS = {
 
 let project = null;
 
+let clientReviewProject = null;
+
 let grid = createEmptyGrid();
 
 let currentTool = "floor";
@@ -156,11 +158,17 @@ const architectCanvas =
 const builderCanvas =
     document.getElementById("builder-canvas");
 
+const clientReviewCanvas =
+    document.getElementById("client-review-canvas");
+
 const architectContext =
     architectCanvas.getContext("2d");
 
 const builderContext =
     builderCanvas.getContext("2d");
+
+const clientReviewContext =
+    clientReviewCanvas.getContext("2d");
 
 
 /* ==========================================
@@ -432,6 +440,88 @@ function createProject() {
 
 
 /* ==========================================
+   GERAR CLIENTE ALEATÓRIO
+========================================== */
+
+function randomInteger(minimum, maximum) {
+
+    return Math.floor(
+        Math.random() * (maximum - minimum + 1)
+    ) + minimum;
+
+}
+
+
+function generateRandomClient() {
+
+    const names = [
+        "Residência Moderna",
+        "Casa da Família",
+        "Refúgio de Férias",
+        "Casa dos Sonhos",
+        "Lar Contemporâneo",
+        "Vila Familiar",
+        "Sobrado Aurora",
+        "Casa Horizonte"
+    ];
+
+    const styles = [
+        "modern",
+        "classic",
+        "rustic",
+        "industrial",
+        "minimalist"
+    ];
+
+    const notes = [
+        "A casa deve ter ambientes claros e bem ventilados.",
+        "Priorizar um espaço externo agradável para a família.",
+        "Gostamos de ambientes confortáveis e com boa iluminação.",
+        "Queremos uma casa prática, moderna e econômica.",
+        "A residência deve ter espaço para receber visitas.",
+        "Preferimos ambientes integrados e bem distribuídos.",
+        "Sem observações adicionais."
+    ];
+
+    document.getElementById("project-name").value =
+        names[randomInteger(0, names.length - 1)];
+
+    document.getElementById("project-budget").value =
+        randomInteger(35, 120) * 1000;
+
+    document.getElementById("project-deadline").value =
+        randomInteger(20, 75);
+
+    document.getElementById("project-style").value =
+        styles[randomInteger(0, styles.length - 1)];
+
+    document.getElementById("req-bedroom").value =
+        randomInteger(1, 5);
+
+    document.getElementById("req-bathroom").value =
+        randomInteger(1, 3);
+
+    document.getElementById("req-living").value =
+        randomInteger(1, 2);
+
+    document.getElementById("req-kitchen").value =
+        randomInteger(1, 2);
+
+    document.getElementById("req-garage").value =
+        randomInteger(0, 2);
+
+    document.getElementById("req-window").value =
+        randomInteger(4, 12);
+
+    document.getElementById("project-notes").value =
+        notes[randomInteger(0, notes.length - 1)];
+
+    notify("Novo cliente gerado!");
+
+}
+
+
+/* ==========================================
    EXPORTAÇÃO JSON
 ========================================== */
 
@@ -443,46 +533,43 @@ function exportProject() {
         return;
     }
 
+    downloadProjectData(project);
+
+}
+
+
+function downloadProjectData(data, suffix = "") {
+
     try {
 
-        // Gerar JSON completo
-        const json = JSON.stringify(project, null, 2);
+        const json = JSON.stringify(data, null, 2);
 
-        // Criar arquivo
         const blob = new Blob(
             [json],
             { type: "application/json;charset=utf-8" }
         );
 
-        // Criar URL temporária
         const url = URL.createObjectURL(blob);
 
-        // Criar link de download
         const link = document.createElement("a");
 
         link.href = url;
 
         link.download = (
-            project.project?.name || "house-builder"
-        ).replace(/[^a-z0-9_-]/gi, "_") + ".json";
+            data.project?.name || "house-builder"
+        ).replace(/[^a-z0-9_-]/gi, "_") + suffix + ".json";
 
-        // Adicionar ao documento
         document.body.appendChild(link);
 
-        // Disparar download
         link.click();
 
-        // Remover link
         document.body.removeChild(link);
 
-        // Liberar URL depois do download
         setTimeout(() => {
             URL.revokeObjectURL(url);
         }, 1000);
 
-        console.log("JSON exportado:", json);
-
-        notify("JSON exportado com sucesso!");
+        notify("Arquivo JSON exportado com sucesso!");
 
     } catch (error) {
 
@@ -866,7 +953,12 @@ document.getElementById("clear-plan")
    RENDERIZAÇÃO DO CANVAS
 ========================================== */
 
-function drawGrid(context, showConstruction = false) {
+function drawGrid(
+    context,
+    showConstruction = false,
+    sourceGrid = grid,
+    sourceConstruction = construction
+) {
 
     const tileSize = CONFIG.tileSize;
 
@@ -893,7 +985,7 @@ function drawGrid(context, showConstruction = false) {
 
         for (let x = 0; x < CONFIG.width; x++) {
 
-            const cell = grid[y][x];
+            const cell = sourceGrid[y][x];
 
             const px = x * tileSize;
 
@@ -979,7 +1071,7 @@ function drawGrid(context, showConstruction = false) {
                     const index =
                         y * CONFIG.width + x;
 
-                    if (construction.built.includes(index)) {
+                    if (sourceConstruction.built.includes(index)) {
 
                         context.fillStyle =
                             "rgba(100,230,130,.35)";
@@ -1246,9 +1338,9 @@ document.getElementById("save-plan")
    CONTAR TILES
 ========================================== */
 
-function countTiles(type) {
+function countTiles(type, sourceGrid = grid) {
 
-    return grid.flat().filter(cell => {
+    return sourceGrid.flat().filter(cell => {
 
         return cell?.type === type;
 
@@ -1261,24 +1353,73 @@ function countTiles(type) {
    CONTAR CÔMODOS
 ========================================== */
 
-function countRooms(type) {
+function countRooms(type, sourceGrid = grid) {
 
-    const rooms = new Set();
+    const visited = Array.from(
+        { length: sourceGrid.length },
+        () => Array(sourceGrid[0].length).fill(false)
+    );
 
-    grid.flat().forEach(cell => {
+    let roomCount = 0;
 
-        if (
-            cell?.type === type &&
-            cell.roomId
-        ) {
+    for (let y = 0; y < sourceGrid.length; y++) {
 
-            rooms.add(cell.roomId);
+        for (let x = 0; x < sourceGrid[y].length; x++) {
+
+            if (
+                visited[y][x] ||
+                sourceGrid[y][x]?.type !== type
+            ) {
+
+                continue;
+
+            }
+
+            roomCount++;
+
+            const cells = [{ x, y }];
+
+            visited[y][x] = true;
+
+            while (cells.length > 0) {
+
+                const cell = cells.pop();
+
+                const neighbors = [
+                    { x: cell.x + 1, y: cell.y },
+                    { x: cell.x - 1, y: cell.y },
+                    { x: cell.x, y: cell.y + 1 },
+                    { x: cell.x, y: cell.y - 1 }
+                ];
+
+                neighbors.forEach(neighbor => {
+
+                    if (
+                        neighbor.x < 0 ||
+                        neighbor.y < 0 ||
+                        neighbor.y >= sourceGrid.length ||
+                        neighbor.x >= sourceGrid[neighbor.y].length ||
+                        visited[neighbor.y][neighbor.x] ||
+                        sourceGrid[neighbor.y][neighbor.x]?.type !== type
+                    ) {
+
+                        return;
+
+                    }
+
+                    visited[neighbor.y][neighbor.x] = true;
+
+                    cells.push(neighbor);
+
+                });
+
+            }
 
         }
 
-    });
+    }
 
-    return rooms.size;
+    return roomCount;
 
 }
 
@@ -1707,7 +1848,26 @@ document.getElementById("export-construction")
 
         if (!project?.floorPlan) {
 
-            notify("Nenhuma planta carregada.");
+            notify("Importe uma planta antes de enviar a obra.");
+
+            return;
+
+        }
+
+        const total = grid.flat().filter(Boolean).length;
+
+        const built = new Set(construction.built);
+
+        if (
+            total === 0 ||
+            built.size < total ||
+            grid.some((row, y) => row.some((cell, x) => (
+                cell &&
+                !built.has(y * CONFIG.width + x)
+            )))
+        ) {
+
+            notify("Conclua todos os elementos antes de enviar ao cliente.");
 
             return;
 
@@ -1717,32 +1877,439 @@ document.getElementById("export-construction")
 
             ...construction,
 
-            completedAt:
-
-                construction.built.length ===
-                grid.flat().filter(Boolean).length
-
-                    ? new Date().toISOString()
-
-                    : null
+            completedAt: new Date().toISOString()
 
         };
 
-
-        project.project.status =
-
-            project.construction.completedAt
-
-                ? "built"
-
-                : "construction-in-progress";
-
+        project.project.status = "awaiting-client-review";
 
         saveLocal();
 
         exportProject();
 
-        notify("Resultado exportado!");
+        notify("Obra concluída e enviada para validação!");
+
+    });
+
+
+/* ==========================================
+   VALIDAÇÃO FINAL PELO CLIENTE
+========================================== */
+
+function getClientReviewResults(reviewProject) {
+
+    const reviewGrid = reviewProject.floorPlan.grid;
+
+    const requirements =
+        reviewProject.client.requirements || {};
+
+    const results = Object.entries(REQUIREMENTS).map(([key, label]) => {
+
+        const actual = key === "window"
+            ? countTiles(key, reviewGrid)
+            : countRooms(key, reviewGrid);
+
+        const required = Number(requirements[key]) || 0;
+
+        return {
+            label,
+            actual,
+            required,
+            valid: actual >= required
+        };
+
+    });
+
+    const built = new Set(reviewProject.construction.built);
+
+    let totalTiles = 0;
+
+    let completedTiles = 0;
+
+    reviewGrid.forEach((row, y) => {
+
+        row.forEach((cell, x) => {
+
+            if (!cell) return;
+
+            totalTiles++;
+
+            if (built.has(y * CONFIG.width + x)) {
+
+                completedTiles++;
+
+            }
+
+        });
+
+    });
+
+    const budget = Number(reviewProject.client.budget);
+
+    const remainingMoney =
+        Number(reviewProject.construction.money);
+
+    const days = Number(reviewProject.construction.days);
+
+    const deadline = Number(reviewProject.client.deadline);
+
+    const completed = totalTiles > 0 &&
+        completedTiles === totalTiles;
+
+    const withinBudget = Number.isFinite(budget) &&
+        Number.isFinite(remainingMoney) &&
+        remainingMoney >= 0 &&
+        remainingMoney <= budget;
+
+    const withinDeadline = Number.isFinite(days) &&
+        Number.isFinite(deadline) &&
+        days <= deadline;
+
+    const requirementsMet = results.every(result => result.valid);
+
+    return {
+        results,
+        totalTiles,
+        completedTiles,
+        completed,
+        withinBudget,
+        withinDeadline,
+        requirementsMet,
+        approved: completed &&
+            withinBudget &&
+            withinDeadline &&
+            requirementsMet
+    };
+
+}
+
+
+function renderClientReview() {
+
+    if (!clientReviewProject) return;
+
+    const results = getClientReviewResults(clientReviewProject);
+
+    document.getElementById("client-review-content")
+        .classList.remove("hidden");
+
+    document.getElementById("client-review-project-name")
+        .textContent = clientReviewProject.project.name;
+
+    document.getElementById("client-review-info")
+        .textContent =
+            "Obra recebida: " +
+            clientReviewProject.project.name +
+            ". Confira os itens e registre sua decisão abaixo.";
+
+    const rows = results.results.map(result => `
+
+        <div class="requirement">
+            <span>${result.label}</span>
+            <span class="${result.valid ? "good" : "bad"}">
+                ${result.actual}/${result.required}
+                ${result.valid ? "✓" : "✗"}
+            </span>
+        </div>
+
+    `).join("");
+
+    const constructionRows = `
+        <div class="requirement">
+            <span>Obra concluída</span>
+            <span class="${results.completed ? "good" : "bad"}">
+                ${results.completedTiles}/${results.totalTiles}
+                ${results.completed ? "✓" : "✗"}
+            </span>
+        </div>
+        <div class="requirement">
+            <span>Orçamento</span>
+            <span class="${results.withinBudget ? "good" : "bad"}">
+                $${clientReviewProject.construction.money}/$${clientReviewProject.client.budget}
+                ${results.withinBudget ? "✓" : "✗"}
+            </span>
+        </div>
+        <div class="requirement">
+            <span>Prazo</span>
+            <span class="${results.withinDeadline ? "good" : "bad"}">
+                ${clientReviewProject.construction.days}/${clientReviewProject.client.deadline} dias
+                ${results.withinDeadline ? "✓" : "✗"}
+            </span>
+        </div>
+    `;
+
+    document.getElementById("client-review-results")
+        .innerHTML = `
+            <h3>Requisitos do cliente</h3>
+            ${rows}
+            <hr>
+            ${constructionRows}
+        `;
+
+    document.getElementById("client-review-brief")
+        .innerHTML = `
+            <strong>Briefing:</strong>
+            ${escapeHTML(clientReviewProject.client.notes || "Sem observações.")}
+        `;
+
+    drawGrid(
+        clientReviewContext,
+        true,
+        clientReviewProject.floorPlan.grid,
+        clientReviewProject.construction
+    );
+
+    const approveButton = document.getElementById(
+        "approve-construction"
+    );
+
+    const requestChangesButton = document.getElementById(
+        "request-construction-changes"
+    );
+
+    const exportReviewButton = document.getElementById(
+        "export-client-review"
+    );
+
+    approveButton.disabled = !results.approved;
+
+    requestChangesButton.disabled = false;
+
+    const existingReview = clientReviewProject.clientReview;
+
+    if (existingReview) {
+
+        document.getElementById("client-review-status")
+            .textContent = existingReview.status === "approved"
+                ? "Esta obra já foi aprovada pelo cliente."
+                : "O cliente solicitou ajustes nesta obra.";
+
+        document.getElementById("client-review-notes")
+            .value = existingReview.notes || "";
+
+        exportReviewButton.classList.remove("hidden");
+
+    } else {
+
+        document.getElementById("client-review-status")
+            .textContent = results.approved
+                ? "Todos os critérios foram atendidos. Você pode aprovar a obra."
+                : "Há critérios pendentes. A obra não pode ser aprovada, mas você pode solicitar ajustes.";
+
+        exportReviewButton.classList.add("hidden");
+
+    }
+
+}
+
+
+function importClientReview(event) {
+
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+
+        try {
+
+            const data = JSON.parse(reader.result);
+
+            if (
+                data.game !== "House Builder" ||
+                !data.project ||
+                !data.client ||
+                !data.floorPlan ||
+                !data.construction ||
+                !Array.isArray(data.construction.built)
+            ) {
+
+                throw new Error(
+                    "Este arquivo não contém uma construção para validar."
+                );
+
+            }
+
+            const reviewGrid = data.floorPlan.grid;
+
+            if (
+                data.floorPlan.width !== CONFIG.width ||
+                data.floorPlan.height !== CONFIG.height ||
+                !Array.isArray(reviewGrid) ||
+                reviewGrid.length !== CONFIG.height ||
+                reviewGrid.some(row => (
+                    !Array.isArray(row) ||
+                    row.length !== CONFIG.width
+                ))
+            ) {
+
+                throw new Error(
+                    "A planta possui dimensões incompatíveis."
+                );
+
+            }
+
+            reviewGrid.forEach(row => row.forEach(cell => {
+
+                if (
+                    cell !== null &&
+                    (
+                        typeof cell !== "object" ||
+                        !TILE_TYPES[cell.type]
+                    )
+                ) {
+
+                    throw new Error(
+                        "A planta contém elementos inválidos."
+                    );
+
+                }
+
+            }));
+
+            if (
+                !data.client.requirements ||
+                Object.keys(REQUIREMENTS).some(key => {
+
+                    const requirement =
+                        data.client.requirements[key];
+
+                    return requirement !== undefined && (
+                        !Number.isFinite(Number(requirement)) ||
+                        Number(requirement) < 0
+                    );
+
+                }) ||
+                !Number.isFinite(Number(data.client.budget)) ||
+                Number(data.client.budget) < 0 ||
+                !Number.isFinite(Number(data.client.deadline)) ||
+                Number(data.client.deadline) < 0 ||
+                !Number.isFinite(Number(data.construction.money)) ||
+                Number(data.construction.money) < 0 ||
+                !Number.isFinite(Number(data.construction.days)) ||
+                Number(data.construction.days) < 0 ||
+                data.construction.built.some(index => (
+                    !Number.isInteger(index) ||
+                    index < 0 ||
+                    index >= CONFIG.width * CONFIG.height
+                ))
+            ) {
+
+                throw new Error(
+                    "O briefing ou o progresso da construção está inválido."
+                );
+
+            }
+
+            clientReviewProject = data;
+
+            renderClientReview();
+
+            notify("Obra carregada para validação.");
+
+        } catch (error) {
+
+            alert("Erro ao validar arquivo: " + error.message);
+
+        }
+
+    };
+
+    reader.readAsText(file);
+
+    event.target.value = "";
+
+}
+
+
+function saveClientReview(status) {
+
+    if (!clientReviewProject) {
+
+        notify("Importe uma obra antes de registrar a validação.");
+
+        return;
+
+    }
+
+    const results = getClientReviewResults(clientReviewProject);
+
+    if (status === "approved" && !results.approved) {
+
+        notify("A obra não atende a todos os critérios para aprovação.");
+
+        return;
+
+    }
+
+    const notes = document.getElementById(
+        "client-review-notes"
+    ).value.trim();
+
+    clientReviewProject.clientReview = {
+
+        status,
+
+        reviewedAt: new Date().toISOString(),
+
+        notes: notes || (
+            status === "approved"
+                ? "Obra aprovada pelo cliente."
+                : "A obra precisa de ajustes."
+        )
+
+    };
+
+    clientReviewProject.project.status =
+        status === "approved"
+            ? "client-approved"
+            : "adjustments-requested";
+
+    renderClientReview();
+
+    notify(
+        status === "approved"
+            ? "Obra aprovada."
+            : "Ajustes solicitados."
+    );
+
+}
+
+
+document.getElementById("client-review-import")
+    .addEventListener("change", importClientReview);
+
+document.getElementById("approve-construction")
+    .addEventListener("click", () => {
+
+        saveClientReview("approved");
+
+    });
+
+document.getElementById("request-construction-changes")
+    .addEventListener("click", () => {
+
+        saveClientReview("adjustments-requested");
+
+    });
+
+document.getElementById("export-client-review")
+    .addEventListener("click", () => {
+
+        if (!clientReviewProject?.clientReview) {
+
+            notify("Registre uma decisão antes de exportar.");
+
+            return;
+
+        }
+
+        downloadProjectData(
+            clientReviewProject,
+            "_resposta-cliente"
+        );
 
     });
 
@@ -1830,6 +2397,8 @@ function restoreLocal() {
 
 function initializeGame() {
 
+    generateRandomClient();
+
     // Restaurar dados salvos
     restoreLocal();
 
@@ -1867,35 +2436,11 @@ initializeGame();
 
 
 /* ==========================================
-   BOTÃO EXPORTAR JSON
+   CONTROLE DOS BOTÕES DO CLIENTE
 ========================================== */
 
-const exportButton = document.getElementById("export-json");
+document.getElementById("random-client")
+    .addEventListener("click", generateRandomClient);
 
-if (exportButton) {
-    exportButton.addEventListener("click", exportProject);
-} else {
-    console.error("Não encontrei o botão #export-json no HTML.");
-}
-
-
-
-    document.addEventListener("DOMContentLoaded", () => {
-
-        const exportButton = document.getElementById("export-json");
-    
-        if (exportButton) {
-    
-            exportButton.addEventListener("click", exportProject);
-    
-        } else {
-    
-            console.error("Botão export-json não encontrado!");
-    
-        }
-    
-    });
-    document.getElementById("export-json")
-    .addEventListener("click", () => {
-        createProject();
-    });
+document.getElementById("export-json")
+    .addEventListener("click", createProject);

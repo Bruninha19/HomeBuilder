@@ -34,6 +34,10 @@
             <button class="nav-button" data-screen="builder">
                 03. Construtor
             </button>
+
+            <button class="nav-button" data-screen="client-review">
+                04. Validação do cliente
+            </button>
         </nav>
     </header>
 
@@ -65,6 +69,7 @@
                             type="text"
                             id="project-name"
                             value="Casa dos Sonhos"
+                            readonly
                         >
                     </div>
 
@@ -78,6 +83,7 @@
                             id="project-budget"
                             value="50000"
                             min="1000"
+                            readonly
                         >
                     </div>
 
@@ -86,7 +92,7 @@
                             Estilo arquitetônico
                         </label>
 
-                        <select id="project-style">
+                        <select id="project-style" disabled>
                             <option value="modern">Moderno</option>
                             <option value="classic">Clássico</option>
                             <option value="rustic">Rústico</option>
@@ -105,6 +111,7 @@
                             id="project-deadline"
                             value="30"
                             min="1"
+                            readonly
                         >
                     </div>
 
@@ -118,32 +125,32 @@
 
                     <div class="form-group">
                         <label for="req-bedroom">Quartos</label>
-                        <input type="number" id="req-bedroom" value="2" min="0">
+                        <input type="number" id="req-bedroom" value="2" min="0" readonly>
                     </div>
 
                     <div class="form-group">
                         <label for="req-bathroom">Banheiros</label>
-                        <input type="number" id="req-bathroom" value="1" min="0">
+                        <input type="number" id="req-bathroom" value="1" min="0" readonly>
                     </div>
 
                     <div class="form-group">
                         <label for="req-living">Salas</label>
-                        <input type="number" id="req-living" value="1" min="0">
+                        <input type="number" id="req-living" value="1" min="0" readonly>
                     </div>
 
                     <div class="form-group">
                         <label for="req-kitchen">Cozinhas</label>
-                        <input type="number" id="req-kitchen" value="1" min="0">
+                        <input type="number" id="req-kitchen" value="1" min="0" readonly>
                     </div>
 
                     <div class="form-group">
                         <label for="req-garage">Garagens</label>
-                        <input type="number" id="req-garage" value="1" min="0">
+                        <input type="number" id="req-garage" value="1" min="0" readonly>
                     </div>
 
                     <div class="form-group">
                         <label for="req-window">Janelas mínimas</label>
-                        <input type="number" id="req-window" value="4" min="0">
+                        <input type="number" id="req-window" value="4" min="0" readonly>
                     </div>
 
                 </div>
@@ -156,10 +163,18 @@
                     <textarea
                         id="project-notes"
                         placeholder="Descreva outros detalhes que você deseja na casa..."
+                        readonly
                     ></textarea>
                 </div>
 
                 <div class="actions">
+                    <button
+                        class="button"
+                        id="random-client"
+                    >
+                        🎲 Gerar cliente aleatório
+                    </button>
+
                     <button
                         class="button primary"
                         id="export-json"
@@ -429,7 +444,7 @@
                             class="button full-width"
                             id="export-construction"
                         >
-                            Exportar progresso JSON
+                            Enviar obra para validação
                         </button>
 
                     </div>
@@ -464,6 +479,114 @@
 
                     <div id="construction-message" class="info-box">
                         Importe uma planta para começar a construção.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================================= -->
+        <!-- VALIDAÇÃO FINAL DO CLIENTE -->
+        <!-- ================================= -->
+
+        <section id="client-review" class="screen hidden">
+
+            <div class="panel">
+
+                <div class="section-header">
+                    <div>
+                        <h2>✅ Validação da obra pelo cliente</h2>
+                        <p>Importe o arquivo enviado pelo construtor para conferir se a obra atende ao briefing.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="client-review-import">
+                        Arquivo final da construção (JSON)
+                    </label>
+
+                    <input
+                        type="file"
+                        id="client-review-import"
+                        accept=".json,application/json"
+                    >
+                </div>
+
+                <div id="client-review-info" class="info-box">
+                    Nenhuma obra recebida. O construtor deve concluir a obra e enviar o arquivo JSON para validação.
+                </div>
+
+            </div>
+
+            <div id="client-review-content" class="hidden">
+
+                <div class="editor-layout review-layout">
+
+                    <aside class="sidebar">
+
+                        <div class="panel">
+                            <h2 id="client-review-project-name">Obra recebida</h2>
+                            <div id="client-review-status" class="info-box">
+                                Aguardando validação.
+                            </div>
+                            <div id="client-review-results"></div>
+                        </div>
+
+                        <div class="panel">
+                            <label for="client-review-notes">
+                                Observações para o construtor
+                            </label>
+
+                            <textarea
+                                id="client-review-notes"
+                                placeholder="Descreva o que está de acordo ou quais ajustes são necessários..."
+                            ></textarea>
+
+                            <button
+                                class="button primary full-width"
+                                id="approve-construction"
+                                disabled
+                            >
+                                Aprovar obra
+                            </button>
+
+                            <button
+                                class="button full-width"
+                                id="request-construction-changes"
+                                disabled
+                            >
+                                Solicitar ajustes
+                            </button>
+
+                            <button
+                                class="button full-width hidden"
+                                id="export-client-review"
+                            >
+                                Exportar resposta para o construtor
+                            </button>
+                        </div>
+
+                    </aside>
+
+                    <div class="panel editor-panel">
+                        <div class="editor-header">
+                            <div>
+                                <h2>Planta construída</h2>
+                                <small>Os elementos verdes foram construídos.</small>
+                            </div>
+                        </div>
+
+                        <div class="canvas-container">
+                            <canvas
+                                id="client-review-canvas"
+                                width="720"
+                                height="480"
+                            ></canvas>
+                        </div>
+
+                        <div id="client-review-brief" class="info-box"></div>
                     </div>
 
                 </div>

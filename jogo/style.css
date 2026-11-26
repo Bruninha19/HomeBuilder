@@ -292,6 +292,17 @@ textarea:focus {
     box-shadow: 0 0 0 2px rgba(131,214,155,.1);
 }
 
+input[readonly],
+textarea[readonly],
+select:disabled {
+    opacity: .8;
+    cursor: default;
+}
+
+#project-style:disabled {
+    appearance: none;
+}
+
 input[type="file"] {
     font-size: 11px;
 }
@@ -319,6 +330,10 @@ textarea {
     gap: 15px;
 
     align-items: start;
+}
+
+.review-layout {
+    margin-top: 15px;
 }
 
 .sidebar {
